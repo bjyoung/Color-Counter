@@ -5,9 +5,7 @@
     "version": "1.0.0",
     "author": 
     { 
-        "name": "Brandon Young",
-        "email": "ByAppDev@gmail.com",
-        "url": "https://www.brandonjamesyoung.com/" 
+        "name": "Brandon Young"
     },
     "license": "MIT",
     "categories": [ "Extension Packs" ],
