@@ -1,6 +1,6 @@
 # Color Counter
 
-Color Counter is a plugin for Aseprite that outputs how many times each RGB color is used in the active sprite.
+Color Counter is an Aseprite plugin that outputs how many times each RGB color is used in the active sprite.
 
 ## Installation Steps
 
@@ -19,9 +19,8 @@ Color Counter is a plugin for Aseprite that outputs how many times each RGB colo
 ## Setup Development Environment (Windows)
 
 1. Download [VSCode](https://code.visualstudio.com/download)
-1. Add Lua extension (by sumneko) to VSCode
-1. Download source code from Github
-1. Unzip source code and open the root folder with VSCode
+1. Add Lua (by sumneko) and markdownlint extensions to VSCode
+1. Clone repo from [Github](https://github.com/bjyoung/Color-Counter)
 
 ## Generating the Extension
 
@@ -32,7 +31,7 @@ Color Counter is a plugin for Aseprite that outputs how many times each RGB colo
 
 ## Links
 
-- Source: n/a
+- [Codebase source](https://github.com/bjyoung/Color-Counter)
 
 ## License
 
