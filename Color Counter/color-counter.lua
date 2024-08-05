@@ -19,11 +19,9 @@ end
 local function printImageStats(image)
   local width = image.width
   local height = image.height
-  local numPixels = width * height
 
   print("Width: " .. width)
   print("Height: " .. height)
-  print("# Pixels: " .. numPixels)
 end
 
 -- Count number of times each RGB value is used and return as a table of RGB to count values
@@ -33,6 +31,8 @@ local function countColors(image)
   if debugMode then
     print ("(x, y): [r, g, b, a]")
   end
+
+  local num_pixels = 0
 
   for it in image:pixels() do
     local pixelValue = it()
@@ -58,16 +58,20 @@ local function countColors(image)
       if color[1] == rgb[1] and color[2] == rgb[2] and color[3] == rgb[3] then
         colors[color] = count + 1
         colorExists = true
+        num_pixels = num_pixels + 1
         break
       end
     end
 
     if colorExists == false then
       colors[rgb] = 1
+      num_pixels = num_pixels + 1
     end
-      ::continue::
+
+    ::continue::
   end
 
+  print("# Pixels: " .. num_pixels)
   return colors
 end
 
@@ -76,7 +80,7 @@ local function outputColorCounts(colors)
   print("Color counts (RGB):")
   printDottedLine(false)
 
-  for rgb, count  in pairs(colors) do
+  for rgb, count in pairs(colors) do
     print("(" .. rgb[1] .. ", " .. rgb[2] .. ", " .. rgb[3] .. "): " .. count)
   end
 
