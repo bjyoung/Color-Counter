@@ -15,7 +15,7 @@ When in doubt, follow existing code base conventions.
 ## Functions
 
 - Name using camelCase
-- Parameter names use camelCase
+- Parameter names use snake_case
 - Modifiers, `function` keyword, name and parameters should be on the same line
 - `end` keyword should be on its own line
 
@@ -24,6 +24,10 @@ function addValues(x, y)
     -- Code here
 end
 ```
+
+## Variables
+
+- Name using snake_case
 
 ## Constants
 
