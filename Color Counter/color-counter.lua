@@ -24,8 +24,13 @@ local function printImageStats(image)
   print("Height: " .. height)
 end
 
+-- Where rgb is a table containing 3 elements (R, G, B) that are between 0 and 255 inclusive
+local function hash(rgb)
+  return 1000000000 + rgb[1] * 1000000 + rgb[2] * 1000 + rgb[3]
+end
+
 -- Count number of times each RGB value is used and return as a table of RGB to count values
-local function countColors(image)
+local function countRgbColors(image)
   local colors = {}
 
   if debugMode then
@@ -76,15 +81,17 @@ local function countColors(image)
 end
 
 local function outputColorCounts(colors)
-  printDottedLine(true)
+  local withLineBreak = true
+  printDottedLine(withLineBreak)
   print("Color counts (RGB):")
-  printDottedLine(false)
+  local withoutLineBreak = false
+  printDottedLine(withoutLineBreak)
 
   for rgb, count in pairs(colors) do
     print("(" .. rgb[1] .. ", " .. rgb[2] .. ", " .. rgb[3] .. "): " .. count)
   end
 
-  printDottedLine(false)
+  printDottedLine(withoutLineBreak)
 end
 
 local function calculate_counts()
@@ -95,8 +102,13 @@ local function calculate_counts()
     return
   end
 
+  if image.colorMode ~= ColorMode.RGB then
+    print("Sprite color mode not set to RGB")
+    return
+  end
+
   printImageStats(image)
-  local colors = countColors(image)
+   local colors = countRgbColors(image)
   outputColorCounts(colors)
 end
 
