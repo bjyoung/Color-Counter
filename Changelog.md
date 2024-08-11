@@ -10,6 +10,7 @@ This document tracks all notables changes to the Aseprite Color Counter plugin.
 
 - Add warning message when the active sprite is very large and get confirmation from the user before continuing
   - Sprite is "very large" when it is made of 1.5 million pixels or more
+- Stop script automatically if it runs for too long (2 min or more)
 
 ### Changed
 

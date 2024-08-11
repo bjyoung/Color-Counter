@@ -1,9 +1,21 @@
+-- Config options
+
+local LARGE_SPRITE_SIZE = 1500000
+local stopAutomatically = true
+
+-- Number of seconds the script waits before the script stops automatically
+local MAX_RUNTIME = 120
+
+-- Config options END
+
 local debugMode = false
 local MAX_ALPHA = 255
-local MAX_SPRITE_SIZE = 1500000
 local LARGE_SPRITE_ALERT_TITLE = "Large Sprite Warning"
 local LARGE_SPRITE_ALERT_TEXT = "The active sprite is big. The script might take a while or freeze if you continue. Continue anyways?"
 local CONTINUE_BTN_PRESSED = 1
+
+-- How many loops before runtime is checked to see if script went on for too long
+local TIME_CHECK_RATE = 250000
 
 -- ColorData class
 ColorData = {r = 0, g = 0, b = 0}
@@ -36,6 +48,19 @@ local function round(num)
   return tonumber(string.format("%.4f", num))
 end
 
+-- Get how much time passed since the script started running
+-- StartClock must be initialized
+local function getElapsedTime()
+  if StartClock == nil then
+    print("StartClock is not initialized")
+    return nil
+  end
+
+  local endClock = os.clock()
+  local runTime = round(endClock - StartClock)
+  return runTime
+end
+
 local function printDottedLine(withLineBreak)
   local line = ""
 
@@ -63,9 +88,17 @@ local function countRgbColors(image)
     print ("(x, y): [r, g, b, a]")
   end
 
+  local loop_num = 0
   local num_pixels = 0
 
   for it in image:pixels() do
+    loop_num = loop_num + 1
+
+    if stopAutomatically == true and loop_num % TIME_CHECK_RATE == 0 and getElapsedTime() > MAX_RUNTIME  then
+      print("The script is hanging. Try with a smaller sprite.")
+      return nil
+    end
+
     local pixelValue = it()
     local a = app.pixelColor.rgbaA(pixelValue)
 
@@ -130,7 +163,7 @@ local function calculate_counts()
   printImageStats(image)
   local imageSize = image.width * image.height
 
-  if imageSize >= MAX_SPRITE_SIZE then
+  if imageSize >= LARGE_SPRITE_SIZE then
     local warning_result = app.alert{
       title=LARGE_SPRITE_ALERT_TITLE,
       text=LARGE_SPRITE_ALERT_TEXT,
@@ -143,20 +176,12 @@ local function calculate_counts()
   end
 
   local colors = countRgbColors(image)
-  outputColorCounts(colors)
-end
 
--- Get how much time passed since the script started running
--- StartClock must be initialized
-local function getElapsedTime()
-  if StartClock == nil then
-    print("StartClock is not initialized")
-    return nil
+  if colors == nil then
+    return
   end
 
-  local endClock = os.clock()
-  local runTime = round(endClock - StartClock)
-  return runTime
+  outputColorCounts(colors)
 end
 
 local function count_pixels()
