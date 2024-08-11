@@ -2,7 +2,7 @@
     "name": "color-counter",
     "displayName": "Color Counter",
     "description": "Count the number of pixels per RGB color used in the active sprite",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "author": 
     { 
         "name": "Brandon Young",

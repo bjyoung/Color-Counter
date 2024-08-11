@@ -1,6 +1,7 @@
 -- Config options
 
 local LARGE_SPRITE_SIZE = 1500000
+local MAX_NUM_COLORS = 1000
 local stopAutomatically = true
 
 -- Number of seconds the script waits before the script stops automatically
@@ -90,6 +91,7 @@ local function countRgbColors(image)
 
   local loop_num = 0
   local num_pixels = 0
+  local num_colors = 0
 
   for it in image:pixels() do
     loop_num = loop_num + 1
@@ -124,6 +126,12 @@ local function countRgbColors(image)
       colorDataEntry.count = colorDataEntry.count + 1
     else
       colors[currHashStr] = currColorData
+      num_colors = num_colors + 1
+
+      if num_colors > MAX_NUM_COLORS then
+        print('Over ' .. tostring(MAX_NUM_COLORS) .. ' colors detected. Stopping the script.')
+        return nil
+      end
     end
 
     ::continue::
