@@ -25,10 +25,11 @@ Color Counter is an Aseprite plugin that outputs how many times each RGB color i
 
 ## Generating the Extension
 
+1. Make sure you have Aseprite installed
 1. Go to the root project folder
 1. Right-click on the Color Counter folder > `Compress to ZIP file`. If you don't have that option, use any compression method to ZIP the folder.
 1. Rename the ZIP file extension to `.aseprite-extension`
-1. Double-click the `.aseprite-extension` file to install the extension
+1. Double-click the `.aseprite-extension` file to install the extension.
 
 ## Links
 

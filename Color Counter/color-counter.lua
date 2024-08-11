@@ -1,5 +1,9 @@
 local debugMode = false
 local MAX_ALPHA = 255
+local MAX_SPRITE_SIZE = 1500000
+local LARGE_SPRITE_ALERT_TITLE = "Large Sprite Warning"
+local LARGE_SPRITE_ALERT_TEXT = "The active sprite is big. The script might take a while or freeze if you continue. Continue anyways?"
+local CONTINUE_BTN_PRESSED = 1
 
 -- ColorData class
 ColorData = {r = 0, g = 0, b = 0}
@@ -124,16 +128,41 @@ local function calculate_counts()
   end
 
   printImageStats(image)
-   local colors = countRgbColors(image)
+  local imageSize = image.width * image.height
+
+  if imageSize >= MAX_SPRITE_SIZE then
+    local warning_result = app.alert{
+      title=LARGE_SPRITE_ALERT_TITLE,
+      text=LARGE_SPRITE_ALERT_TEXT,
+      buttons={"Continue", "Cancel"}
+    }
+
+    if warning_result ~= CONTINUE_BTN_PRESSED then
+      return
+    end
+  end
+
+  local colors = countRgbColors(image)
   outputColorCounts(colors)
 end
 
-local function count_pixels()
-  local startClock = os.clock()
-  calculate_counts()
+-- Get how much time passed since the script started running
+-- StartClock must be initialized
+local function getElapsedTime()
+  if StartClock == nil then
+    print("StartClock is not initialized")
+    return nil
+  end
+
   local endClock = os.clock()
-  local runTime = round(endClock - startClock)
-  print("\nElapsed time is: " .. runTime .. "s")
+  local runTime = round(endClock - StartClock)
+  return runTime
+end
+
+local function count_pixels()
+  StartClock = os.clock()
+  calculate_counts()
+  print("\nElapsed time is: " .. getElapsedTime() .. "s")
 end
 
 function init(plugin)
