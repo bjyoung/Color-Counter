@@ -1,7 +1,12 @@
 -- Config options
 
+-- Num pixels in a sprite until the large sprite warning appears
 local LARGE_SPRITE_SIZE = 1500000
+
+-- Number of colors allowed in the sprite until the script aborts
 local MAX_NUM_COLORS = 1000
+
+-- Disable script after a period of time, does not disable script when set to false
 local stopAutomatically = true
 
 -- Number of seconds the script waits before the script stops automatically
@@ -81,7 +86,7 @@ local function printImageStats(image)
   print("Height: " .. height)
 end
 
--- Count number of times each RGB value is used and return as a table of RGB to count values
+-- Count number of times each RGB value is used and return as a table of hash to ColorData objects
 local function countRgbColors(image)
   local colors = {}
 
@@ -155,6 +160,7 @@ local function outputColorCounts(colorDataList)
   printDottedLine(withoutLineBreak)
 end
 
+-- Count how many times each RGB value appears in the sprite and output the results to the screen
 local function calculate_counts()
   local image = app.image
 
@@ -192,6 +198,7 @@ local function calculate_counts()
   outputColorCounts(colors)
 end
 
+-- Time script and activate main script function
 local function count_pixels()
   StartClock = os.clock()
   calculate_counts()
