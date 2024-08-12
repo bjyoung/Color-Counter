@@ -15,10 +15,12 @@ local MAX_RUNTIME = 120
 -- Config options END
 
 local debugMode = false
+local totalNumPixels = nil
 local MAX_ALPHA = 255
 local LARGE_SPRITE_ALERT_TITLE = "Large Sprite Warning"
 local LARGE_SPRITE_ALERT_TEXT = "The active sprite is big. The script might take a while or freeze if you continue. Continue anyways?"
 local CONTINUE_BTN_PRESSED = 1
+local DIALOG_TITLE_PREFIX = "RGB Counts"
 
 -- How many loops before runtime is checked to see if script went on for too long
 local TIME_CHECK_RATE = 250000
@@ -49,6 +51,12 @@ function ColorData:toString()
   return "[" .. self.r .. ", " .. self.g .. ", " .. self.b .. "]: " .. self.count
 end
 -- ColorData class END
+
+local function printError(error)
+  if debugMode then
+    print(error)
+  end
+end
 
 local function round(num)
   return tonumber(string.format("%.4f", num))
@@ -94,15 +102,17 @@ local function countRgbColors(image)
     print ("(x, y): [r, g, b, a]")
   end
 
-  local loop_num = 0
-  local num_pixels = 0
+  local loopNum = 0
+  totalNumPixels = 0
   local num_colors = 0
 
   for it in image:pixels() do
-    loop_num = loop_num + 1
+    loopNum = loopNum + 1
 
-    if stopAutomatically == true and loop_num % TIME_CHECK_RATE == 0 and getElapsedTime() > MAX_RUNTIME  then
-      print("The script is hanging. Try with a smaller sprite.")
+    if stopAutomatically and loopNum % TIME_CHECK_RATE == 0 and getElapsedTime() > MAX_RUNTIME then
+      local laggingScriptErrorMessage = "The script is hanging. Try with a smaller sprite."
+      printError(laggingScriptErrorMessage)
+      app.alert(laggingScriptErrorMessage)
       return nil
     end
 
@@ -114,15 +124,11 @@ local function countRgbColors(image)
       goto continue
     end
 
-    num_pixels = num_pixels + 1
+    totalNumPixels = totalNumPixels + 1
     local r = app.pixelColor.rgbaR(pixelValue)
     local g = app.pixelColor.rgbaG(pixelValue)
     local b = app.pixelColor.rgbaB(pixelValue)
     local currColorData = ColorData:new{nil, r = r, g = g, b = b}
-
-    if debugMode then
-      print("(" .. it.x .. ", " .. it.y .. "): [" .. r .. ", " .. g .. ", " .. b .. ", " .. a .. "]")
-    end
 
     local currHashStr = tostring(currColorData:getHash())
     local colorDataEntry = colors[currHashStr]
@@ -134,7 +140,9 @@ local function countRgbColors(image)
       num_colors = num_colors + 1
 
       if num_colors > MAX_NUM_COLORS then
-        print('Over ' .. tostring(MAX_NUM_COLORS) .. ' colors detected. Stopping the script.')
+        local colorLimitErrorMessage = 'Over ' .. tostring(MAX_NUM_COLORS) .. ' colors detected. Stopping the script.'
+        printError(colorLimitErrorMessage)
+        app.alert(colorLimitErrorMessage)
         return nil
       end
     end
@@ -142,11 +150,47 @@ local function countRgbColors(image)
     ::continue::
   end
 
-  print("# Pixels: " .. num_pixels)
+  if debugMode then
+    print("# Pixels: " .. totalNumPixels)
+  end
+
   return colors
 end
 
-local function outputColorCounts(colorDataList)
+local function toList(colorDataTable)
+  local colorDataList = {}
+  local index = 0
+
+  for _, colorData in pairs(colorDataTable) do
+    index = index + 1
+    colorDataList[index] = colorData
+  end
+
+  return colorDataList
+end
+
+local function compareColorCountsDesc(a, b)
+  return a.count > b.count
+end
+
+-- Convert hash table and return an indexed list of color data, sorted by count descending
+local function sortColorData(colorData)
+  local colorDataList = toList(colorData)
+
+  if debugMode then
+    print('Sorting table by count')
+  end
+
+  table.sort(colorDataList, compareColorCountsDesc)
+
+  if debugMode then
+    print('Done sorting')
+  end
+
+  return colorDataList
+end
+
+local function outputCountsToConsole(colorDataList)
   local withLineBreak = true
   printDottedLine(withLineBreak)
   print("Color counts (RGB):")
@@ -160,53 +204,123 @@ local function outputColorCounts(colorDataList)
   printDottedLine(withoutLineBreak)
 end
 
--- Count how many times each RGB value appears in the sprite and output the results to the screen
-local function calculate_counts()
+local function outputCountsToDialog(colorDataList)
+  local dialogTitle = DIALOG_TITLE_PREFIX
+
+  if totalNumPixels ~= nil then
+    dialogTitle = dialogTitle .. " (Total # Pixels: " .. tostring(totalNumPixels) .. ")"
+  end
+
+  local dlg = Dialog {
+    title=dialogTitle
+  }
+
+  local loop_num = 0
+
+  for _, colorData in pairs(colorDataList) do
+    loop_num = loop_num + 1
+    local colorId = "color_" .. loop_num
+
+    local currColor = Color {
+      r=colorData.r,
+      g=colorData.g,
+      b=colorData.b
+    }
+
+    local colorLabel = "(" .. colorData.r .. ", " .. colorData.g .. ", " .. colorData.b .. "):"
+
+    dlg:color {
+      id=colorId,
+      label=colorLabel,
+      color=currColor,
+      enabled=false,
+    }
+
+    local labelId = "label_" .. loop_num
+
+    dlg:label {
+        id=labelId,
+        label="Count:",
+        text=colorData.count
+    }
+
+    local separatorId = "separator_" .. loop_num
+
+    dlg:separator {
+      id = separatorId,
+    }
+  end
+
+  dlg:show {
+    wait=false,
+    autoscrollbars=true
+  }
+end
+
+local function calculateAndOutputCounts()
   local image = app.image
 
   if image == nil then
-    print("No active sprite found")
+    local noActiveSpriteErrorMessage = "No active sprite found"
+    printError(noActiveSpriteErrorMessage)
+    app.alert(noActiveSpriteErrorMessage)
     return
   end
 
   if image.colorMode ~= ColorMode.RGB then
-    print("Sprite color mode not set to RGB")
+    local invalidModeErrorMessage = "Sprite color mode not set to RGB"
+    printError(invalidModeErrorMessage)
+    app.alert(invalidModeErrorMessage)
     return
   end
 
-  printImageStats(image)
+  if debugMode then
+    printImageStats(image)
+  end
+  
   local imageSize = image.width * image.height
 
   if imageSize >= LARGE_SPRITE_SIZE then
-    local warning_result = app.alert{
+    local warningResult = app.alert{
       title=LARGE_SPRITE_ALERT_TITLE,
       text=LARGE_SPRITE_ALERT_TEXT,
       buttons={"Continue", "Cancel"}
     }
 
-    if warning_result ~= CONTINUE_BTN_PRESSED then
+    if warningResult ~= CONTINUE_BTN_PRESSED then
       return
     end
   end
 
-  local colors = countRgbColors(image)
+  local colorData = countRgbColors(image)
 
-  if colors == nil then
+  if colorData == nil then
     return
   end
 
-  outputColorCounts(colors)
+  local sortedColorData = sortColorData(colorData)
+
+  if debugMode then
+    outputCountsToConsole(sortedColorData)
+  end
+
+  outputCountsToDialog(sortedColorData)
 end
 
 -- Time script and activate main script function
 local function count_pixels()
   StartClock = os.clock()
-  calculate_counts()
-  print("\nElapsed time is: " .. getElapsedTime() .. "s")
+  calculateAndOutputCounts()
+
+  if debugMode then
+    print("\nElapsed time is: " .. getElapsedTime() .. "s")
+  end
 end
 
 function init(plugin)
-  print("Initializing Colors Counter")
+  if debugMode then
+    print("Initializing Colors Counter")
+  end
 
   plugin:newCommand {
     id="CountColors",
@@ -214,8 +328,4 @@ function init(plugin)
     group="sprite_properties",
     onclick=count_pixels
   }
-end
-
-function exit(plugin)
-  print("Closing Color Counter")
 end

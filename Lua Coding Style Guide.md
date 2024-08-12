@@ -15,7 +15,6 @@ When in doubt, follow existing code base conventions.
 ## Functions
 
 - Name using camelCase
-- Parameter names use snake_case
 - Modifiers, `function` keyword, name and parameters should be on the same line
 - `end` keyword should be on its own line
 
@@ -27,7 +26,7 @@ end
 
 ## Variables
 
-- Name using snake_case
+- Name using camelCase
 
 ## Constants
 

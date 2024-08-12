@@ -9,7 +9,10 @@ Color Counter is an Aseprite plugin that outputs how many times each RGB color i
 1. Download `Color Counter.aseprite-extension`
 1. Double-click or execute the file
 1. Click through prompts to install the extension
-1. Open a sprite and go to Sprite > Count Colors to run the script
+
+## How to Use
+
+1. Open a sprite in Aseprite and go to Sprite > Count Colors to run the script
 1. Add a shortcut by going to Edit > Keyboard Shortcuts > search for Count Colors > hover over `Key` column and click on `Add` button > fill in details > click `OK`
 
 ## Limitations
@@ -33,7 +36,7 @@ Color Counter is an Aseprite plugin that outputs how many times each RGB color i
 
 ## Links
 
-- [Codebase source](https://github.com/bjyoung/Color-Counter)
+- [Source code](https://github.com/bjyoung/Color-Counter)
 
 ## License
 

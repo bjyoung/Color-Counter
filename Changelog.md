@@ -4,12 +4,19 @@ This document tracks all notables changes to the Aseprite Color Counter plugin.
 
 ---
 
-## 1.0.2
+## 1.1.0
 
 ### Added
 
 - Stop the script if the number of colors detected is over 1000
   - Since the script tends to crash or freeze Aseprite if too many colors are inserted into the table
+- Display the color counts in a dialog with the actual colors displayed
+  - Colors are sorted by count in descending order
+
+### Changed
+
+- Hide console output when outside of debug mode
+- Change error messages to be displayed as alerts
 
 ---
 
