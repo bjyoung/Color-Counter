@@ -4,6 +4,14 @@ This document tracks all notables changes to the Aseprite Color Counter plugin.
 
 ---
 
+## 1.1.1
+
+### Added
+
+- If the active sprite has pixels selected, then only the colors in that zone are counted
+
+---
+
 ## 1.1.0
 
 ### Added

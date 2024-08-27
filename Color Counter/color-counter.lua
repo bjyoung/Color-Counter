@@ -6,7 +6,7 @@ local LARGE_SPRITE_SIZE = 1500000
 -- Number of colors allowed in the sprite until the script aborts
 local MAX_NUM_COLORS = 1000
 
--- Disable script after a period of time, does not disable script when set to false
+-- Disable script after a period of time when true
 local stopAutomatically = true
 
 -- Number of seconds the script waits before the script stops automatically
@@ -97,8 +97,21 @@ end
 -- Count number of times each RGB value is used and return as a table of hash to ColorData objects
 local function countRgbColors(image)
   local colors = {}
+  local selection = app.sprite.selection
+  local hasSelection = not selection.isEmpty
 
   if debugMode then
+    if hasSelection == false then
+      print ("Nothing is selected")
+    else
+      local selectionBounds = selection.bounds
+      local boundXStr = tostring(selectionBounds.x)
+      local boundYStr = tostring(selectionBounds.y)
+      local boundWidthStr = tostring(selectionBounds.width)
+      local boundHeightStr = tostring(selectionBounds.height)
+      print ("Has selection with bounds: (" .. boundXStr .. ", " .. boundYStr .. "), width = " .. boundWidthStr .. ", height = " .. boundHeightStr)
+    end
+
     print ("(x, y): [r, g, b, a]")
   end
 
@@ -114,6 +127,11 @@ local function countRgbColors(image)
       printError(laggingScriptErrorMessage)
       app.alert(laggingScriptErrorMessage)
       return nil
+    end
+
+    -- Ignore pixels outside of selection, if there is one
+    if hasSelection and selection:contains(it.x, it.y) == false then
+      goto continue
     end
 
     local pixelValue = it()
@@ -205,10 +223,17 @@ local function outputCountsToConsole(colorDataList)
 end
 
 local function outputCountsToDialog(colorDataList)
-  local dialogTitle = DIALOG_TITLE_PREFIX
+  local dialogTitle = ""
+  local hasSelection = not app.sprite.selection.isEmpty
+  
+  if hasSelection then
+    dialogTitle = "Selected Area " .. DIALOG_TITLE_PREFIX
+  else
+    dialogTitle =  DIALOG_TITLE_PREFIX
+  end
 
   if totalNumPixels ~= nil then
-    dialogTitle = dialogTitle .. " (Total # Pixels: " .. tostring(totalNumPixels) .. ")"
+    dialogTitle = dialogTitle .. " (" .. tostring(totalNumPixels) .. " pixels)"
   end
 
   local dlg = Dialog {
