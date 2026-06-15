@@ -8,7 +8,7 @@ This document tracks all notables changes to the Aseprite Color Counter plugin.
 
 ### Changed
 
-- Improved plugin performance
+- Improved plugin performance, especially for larger sprites
 
 ---
 
