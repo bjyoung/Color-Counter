@@ -18,7 +18,7 @@ local debugMode = false
 local totalNumPixels = nil
 local MAX_ALPHA = 255
 local LARGE_SPRITE_ALERT_TITLE = "Large Sprite Warning"
-local LARGE_SPRITE_ALERT_TEXT = "The active sprite is big. The script might take a while or freeze if you continue. Continue anyways?"
+local LARGE_SPRITE_ALERT_TEXT = "Large sprite detected. The script might take a while or freeze if you continue. Continue anyways?"
 local CONTINUE_BTN_PRESSED = 1
 local DIALOG_TITLE_PREFIX = "RGB Counts"
 
