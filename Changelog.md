@@ -4,6 +4,14 @@ This document tracks all notables changes to the Aseprite Color Counter plugin.
 
 ---
 
+## 1.1.2
+
+### Changed
+
+- Improved plugin performance, especially for larger sprites
+
+---
+
 ## 1.1.1
 
 ### Added
