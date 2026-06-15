@@ -196,9 +196,9 @@ local function countRgbColors(image)
 
   if debugMode then
     print("# Pixels: " .. totalNumPixels)
+    printElapsedTime(ColorCountStart, "Color count took")
   end
 
-  printElapsedTime(ColorCountStart, "Color count took")
   return colors
 end
 
