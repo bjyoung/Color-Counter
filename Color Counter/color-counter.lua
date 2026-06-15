@@ -28,6 +28,10 @@ local TIME_CHECK_RATE = 250000
 -- ColorData class
 ColorData = {r = 0, g = 0, b = 0}
 
+local function hashRgb(r, g, b)
+  return 1000000000 + r * 1000000 + g * 1000 + b
+end
+
 function ColorData:new(o, r, g, b)
   o = o or {}
   setmetatable(o, self)
@@ -40,7 +44,7 @@ function ColorData:new(o, r, g, b)
 end
 
 function ColorData:getHash()
-  return 1000000000 + self.r * 1000000 + self.g * 1000 + self.b
+  return hashRgb(self.r, self.g, self.b)
 end
 
 function ColorData:equals(otherColorData)
@@ -75,6 +79,16 @@ local function getElapsedTime()
   return runTime
 end
 
+-- Print how much time has passed since the given start time in sec
+local function printElapsedTime(startTime, message)
+  if debugMode then
+    if startTime ~= nil then
+      local startTime = round(os.clock() - startTime)
+      print("\n" .. message ..": " .. startTime .. "s")
+    end
+  end
+end
+
 local function printDottedLine(withLineBreak)
   local line = ""
 
@@ -96,6 +110,10 @@ end
 
 -- Count number of times each RGB value is used and return as a table of hash to ColorData objects
 local function countRgbColors(image)
+  if debugMode then
+    ColorCountStart = os.clock()
+  end
+
   local colors = {}
   local selection = app.sprite.selection
   local hasSelection = not selection.isEmpty
@@ -119,6 +137,15 @@ local function countRgbColors(image)
   totalNumPixels = 0
   local num_colors = 0
 
+  -- Setting up loop variables
+  local pixelValue = nil
+  local alpha = nil
+  local r = nil
+  local g = nil
+  local b = nil
+  local currHashStr = nil
+  local colorDataEntry = nil
+
   for it in image:pixels() do
     loopNum = loopNum + 1
 
@@ -134,27 +161,26 @@ local function countRgbColors(image)
       goto continue
     end
 
-    local pixelValue = it()
-    local a = app.pixelColor.rgbaA(pixelValue)
+    pixelValue = it()
+    alpha = app.pixelColor.rgbaA(pixelValue)
 
     -- Ignore semi-transparent and transparent pixels
-    if a < MAX_ALPHA then
+    if alpha < MAX_ALPHA then
       goto continue
     end
 
     totalNumPixels = totalNumPixels + 1
-    local r = app.pixelColor.rgbaR(pixelValue)
-    local g = app.pixelColor.rgbaG(pixelValue)
-    local b = app.pixelColor.rgbaB(pixelValue)
-    local currColorData = ColorData:new{nil, r = r, g = g, b = b}
-
-    local currHashStr = tostring(currColorData:getHash())
-    local colorDataEntry = colors[currHashStr]
+    
+    r = app.pixelColor.rgbaR(pixelValue)
+    g = app.pixelColor.rgbaG(pixelValue)
+    b = app.pixelColor.rgbaB(pixelValue)
+    currHashStr = tostring(hashRgb(r, g, b))
+    colorDataEntry = colors[currHashStr]
 
     if colorDataEntry ~= nil then
       colorDataEntry.count = colorDataEntry.count + 1
     else
-      colors[currHashStr] = currColorData
+      colors[currHashStr] = ColorData:new{nil, r = r, g = g, b = b}
       num_colors = num_colors + 1
 
       if num_colors > MAX_NUM_COLORS then
@@ -172,6 +198,7 @@ local function countRgbColors(image)
     print("# Pixels: " .. totalNumPixels)
   end
 
+  printElapsedTime(ColorCountStart, "Color count took")
   return colors
 end
 
@@ -191,8 +218,12 @@ local function compareColorCountsDesc(a, b)
   return a.count > b.count
 end
 
--- Convert hash table and return an indexed list of color data, sorted by count descending
+-- Convert hash table to a list and return an indexed list of color data, sorted by count descending
 local function sortColorData(colorData)
+  if debugMode then
+    SortStart = os.clock()
+  end
+
   local colorDataList = toList(colorData)
 
   if debugMode then
@@ -203,6 +234,7 @@ local function sortColorData(colorData)
 
   if debugMode then
     print('Done sorting')
+    printElapsedTime(SortStart, "Sorting took")
   end
 
   return colorDataList
@@ -332,7 +364,7 @@ local function calculateAndOutputCounts()
   outputCountsToDialog(sortedColorData)
 end
 
--- Time script and activate main script function
+-- Main function: time script, count pixels and output counts
 local function count_pixels()
   StartClock = os.clock()
   calculateAndOutputCounts()
