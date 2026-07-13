@@ -1,7 +1,7 @@
 -- Config options
 
 -- Num pixels in a sprite until the large sprite warning appears
-local LARGE_SPRITE_SIZE = 1500000
+local LARGE_SPRITE_SIZE = 2000000
 
 -- Number of colors allowed in the sprite until the script aborts
 local MAX_NUM_COLORS = 1000
@@ -11,6 +11,9 @@ local stopAutomatically = true
 
 -- Number of seconds the script waits before the script stops automatically
 local MAX_RUNTIME = 120
+
+-- If true, skip the large sprite warning
+local DISABLE_LARGE_SPRITE_WARNING = false
 
 -- Config options END
 
@@ -108,7 +111,7 @@ local function printImageStats(image)
   print("Height: " .. height)
 end
 
--- Count number of times each RGB value is used and return as a table of hash to ColorData objects
+-- Count how often each RGB value is used and return as a table of hash nums to ColorData objects
 local function countRgbColors(image)
   if debugMode then
     ColorCountStart = os.clock()
@@ -143,7 +146,7 @@ local function countRgbColors(image)
   local r = nil
   local g = nil
   local b = nil
-  local currHashStr = nil
+  local currHash = nil
   local colorDataEntry = nil
 
   for it in image:pixels() do
@@ -174,13 +177,13 @@ local function countRgbColors(image)
     r = app.pixelColor.rgbaR(pixelValue)
     g = app.pixelColor.rgbaG(pixelValue)
     b = app.pixelColor.rgbaB(pixelValue)
-    currHashStr = tostring(hashRgb(r, g, b))
-    colorDataEntry = colors[currHashStr]
+    currHash = hashRgb(r, g, b)
+    colorDataEntry = colors[currHash]
 
     if colorDataEntry ~= nil then
       colorDataEntry.count = colorDataEntry.count + 1
     else
-      colors[currHashStr] = ColorData:new{nil, r = r, g = g, b = b}
+      colors[currHash] = ColorData:new{nil, r = r, g = g, b = b}
       num_colors = num_colors + 1
 
       if num_colors > MAX_NUM_COLORS then
@@ -337,15 +340,17 @@ local function calculateAndOutputCounts()
   
   local imageSize = image.width * image.height
 
-  if imageSize >= LARGE_SPRITE_SIZE then
-    local warningResult = app.alert{
-      title=LARGE_SPRITE_ALERT_TITLE,
-      text=LARGE_SPRITE_ALERT_TEXT,
-      buttons={"Continue", "Cancel"}
-    }
+  if DISABLE_LARGE_SPRITE_WARNING == false then
+    if imageSize >= LARGE_SPRITE_SIZE then
+      local warningResult = app.alert{
+        title=LARGE_SPRITE_ALERT_TITLE,
+        text=LARGE_SPRITE_ALERT_TEXT,
+        buttons={"Continue", "Cancel"}
+      }
 
-    if warningResult ~= CONTINUE_BTN_PRESSED then
-      return
+      if warningResult ~= CONTINUE_BTN_PRESSED then
+        return
+      end
     end
   end
 
