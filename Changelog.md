@@ -4,11 +4,20 @@ This document tracks all notables changes to the Aseprite Color Counter plugin.
 
 ---
 
+## 1.1.3
+
+### Changed
+
+- Improve plugin performance further by about 25%
+- Increase the max pixels before the large sprite warning appears from 1,500,000 to 2,000,000
+
+---
+
 ## 1.1.2
 
 ### Changed
 
-- Improved plugin performance, especially for larger sprites
+- Improve plugin performance by about 40%
 
 ---
 

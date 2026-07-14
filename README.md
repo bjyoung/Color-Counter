@@ -44,7 +44,7 @@ Color Counter is an Aseprite plugin that outputs how many times each RGB color i
 
 Color Counter
 
-Copyright (c) 2024 Brandon Young
+Copyright (c) 2026 Brandon Young
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
