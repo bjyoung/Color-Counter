@@ -4,6 +4,14 @@ This document tracks all notables changes to the Aseprite Color Counter plugin.
 
 ---
 
+## 1.1.4
+
+### Added
+
+- Show color percentages next to counts
+
+---
+
 ## 1.1.3
 
 ### Changed
