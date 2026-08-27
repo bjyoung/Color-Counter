@@ -43,6 +43,7 @@ function ColorData:new(o, r, g, b)
   self.g = g or 0
   self.b = b or 0
   self.count = 1
+  self.percent = 0.0
   return o
 end
 
@@ -197,6 +198,16 @@ local function countRgbColors(image)
     ::continue::
   end
 
+  -- Calculate percentage 
+  local colorPercent = nil
+
+  for i, colorData in pairs(colors) do
+    if colorData ~= nil then
+      colorPercent = (colorData.count * 1.0) / (totalNumPixels * 1.0) * 100.0
+      colors[i].percent = string.format("%.1f", colorPercent)
+    end
+  end
+
   if debugMode then
     print("# Pixels: " .. totalNumPixels)
     printElapsedTime(ColorCountStart, "Color count took")
@@ -251,7 +262,7 @@ local function outputCountsToConsole(colorDataList)
   printDottedLine(withoutLineBreak)
 
   for _, colorData in pairs(colorDataList) do
-    print("(" .. colorData.r .. ", " .. colorData.g .. ", " .. colorData.b .. "): " .. colorData.count)
+    print("(" .. colorData.r .. ", " .. colorData.g .. ", " .. colorData.b .. "): " .. colorData.count .. " (" .. colorData.percent .. "%)")
   end
 
   printDottedLine(withoutLineBreak)
@@ -297,11 +308,12 @@ local function outputCountsToDialog(colorDataList)
     }
 
     local labelId = "label_" .. loop_num
+    local countPercentText = colorData.count .. " (" .. colorData.percent .."%)"
 
     dlg:label {
         id=labelId,
-        label="Count:",
-        text=colorData.count
+        label="Count (%):",
+        text=countPercentText
     }
 
     local separatorId = "separator_" .. loop_num
