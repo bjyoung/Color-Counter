@@ -304,7 +304,8 @@ local function outputCountsToDialog(colorDataList)
       id=colorId,
       label=colorLabel,
       color=currColor,
-      enabled=false,
+      focus=false,
+      enabled=true
     }
 
     local labelId = "label_" .. loop_num
