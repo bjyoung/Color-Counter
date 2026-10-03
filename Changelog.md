@@ -4,9 +4,18 @@ This document tracks all notables changes to the Aseprite Color Counter plugin.
 
 ---
 
+## 1.1.5
+
+### Fixes
+
+- Fix hex colors in the dialog getting grayscaled
+  - Due to API changes, hex colors are now clickable, but editing them won't do anything
+
+---
+
 ## 1.1.4
 
-### Added
+### New
 
 - Show color percentages next to counts
 
@@ -14,7 +23,7 @@ This document tracks all notables changes to the Aseprite Color Counter plugin.
 
 ## 1.1.3
 
-### Changed
+### Changes
 
 - Improve plugin performance further by about 25%
 - Increase the max pixels before the large sprite warning appears from 1,500,000 to 2,000,000
@@ -23,7 +32,7 @@ This document tracks all notables changes to the Aseprite Color Counter plugin.
 
 ## 1.1.2
 
-### Changed
+### Changes
 
 - Improve plugin performance by about 40%
 
@@ -31,7 +40,7 @@ This document tracks all notables changes to the Aseprite Color Counter plugin.
 
 ## 1.1.1
 
-### Added
+### New
 
 - If the active sprite has pixels selected, then only the colors in that zone are counted
 
@@ -39,14 +48,14 @@ This document tracks all notables changes to the Aseprite Color Counter plugin.
 
 ## 1.1.0
 
-### Added
+### New
 
 - Stop the script if the number of colors detected is over 1000
   - Since the script tends to crash or freeze Aseprite if too many colors are inserted into the table
 - Display the color counts in a dialog with the actual colors displayed
   - Colors are sorted by count in descending order
 
-### Changed
+### Changes
 
 - Hide console output when outside of debug mode
 - Change error messages to be displayed as alerts
@@ -55,17 +64,17 @@ This document tracks all notables changes to the Aseprite Color Counter plugin.
 
 ## 1.0.1
 
-### Added
+### New
 
 - Add warning message when the active sprite is very large and get confirmation from the user before continuing
   - Sprite is "very large" when it is made of 1.5 million pixels or more
 - Stop script automatically if it runs for too long (2 min or more)
 
-### Changed
+### Changes
 
 - Improve plugin performance
 
-### Fixed
+### Fixes
 
 - Show error message when active sprite is not in RGB mode
 
@@ -73,7 +82,7 @@ This document tracks all notables changes to the Aseprite Color Counter plugin.
 
 ## 1.0.0
 
-### Added
+### New
 
 - Add plugin adds a command to Aseprite that counts and reports how much of each RGB color is used in the active sprite
   - Can set a shortcut to trigger the command quickly
