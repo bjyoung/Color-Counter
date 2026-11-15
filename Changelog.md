@@ -4,6 +4,14 @@ This document tracks all notables changes to the Aseprite Color Counter plugin.
 
 ---
 
+## 1.2.0
+
+### Fixes
+
+- Fix select area count not working if there is excess space around the sprite
+
+---
+
 ## 1.1.5
 
 ### Fixes

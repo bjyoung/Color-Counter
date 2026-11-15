@@ -149,6 +149,13 @@ local function countRgbColors(image)
   local b = nil
   local currHash = nil
   local colorDataEntry = nil
+  local inSelectArea = nil
+  local celPos = image.cel.position
+
+  if debugMode then
+    print("hasSelection: " .. tostring(hasSelection))
+    print("Pixel loop start")
+  end
 
   for it in image:pixels() do
     loopNum = loopNum + 1
@@ -160,9 +167,18 @@ local function countRgbColors(image)
       return nil
     end
 
-    -- Ignore pixels outside of selection, if there is one
-    if hasSelection and selection:contains(it.x, it.y) == false then
-      goto continue
+    -- Ignore pixels outside of selection, if there is a select area
+    if hasSelection == true then
+      inSelectArea = selection:contains(it.x + celPos.x, it.y + celPos.y)
+
+      if debugMode then
+        print("Pos: [" .. tostring(it.x + celPos.x) .. "," .. tostring(it.y + celPos.y) .. "]")
+        print("In selection: " .. tostring(inSelectArea))
+      end
+
+      if inSelectArea == false then
+        goto continue
+      end
     end
 
     pixelValue = it()
@@ -196,6 +212,10 @@ local function countRgbColors(image)
     end
 
     ::continue::
+  end
+
+  if debugMode then
+    print("Pixel loop end")
   end
 
   -- Calculate percentage 
