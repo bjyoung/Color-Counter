@@ -19,9 +19,10 @@ Color Counter is an Aseprite plugin that outputs how many times each RGB color i
 
 ## Limitations
 
-- Avoid using the extension on more complex art outside of pixel art because Aseprite will freeze due to performance issues
 - Sprite must be in RGB mode
 - Ignores pixels with transparency
+- Only counts pixels in the currently selected layer, even if it is hideen
+- Avoid using the extension on more complex art outside of pixel art because Aseprite will freeze due to performance issues
 
 ## Setup Development Environment (Windows)
 
